@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+window.generate = () => {
+  const states_num = Number(window.states_num.value)
+  const states = [...Array(states_num)].map((_, n) => "s" + n)
+  const bind = f => states.map(f).join('');
+  const lines = [
+    "inductive States" + bind(s => " | " + s),
+    "open States",
+    "def f : States → States → States",
+    bind(s1 => bind(s2 => ["\n| ", s1, ", ", s2, " => s0"].join(''))).slice(1),
+    "set_option maxHeartbeats 0",
+    "example : ∀ x y z, f (f (f s0 x) y) z = f (f x z) (f y z) := by",
+    " intros x y z",
+    " cases x <;> cases y <;> cases z <;> rfl" ]
+  window.out.value = lines.join('\n')
+};
+</script>
+</head>
+<body>
+Number of states: <input id="states_num"><br><br>
+<button onclick="generate()">Generate</button><br><br>
+<textarea id="out" style="width:90%;height:70%"></textarea>
+</body>
+</html>
